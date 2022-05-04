@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "description": "The TCSS 450 Lab Web Service API Documentation",
     "title": "Lab API Doc",
-    "url" : "https://team-4-tcss-450-web-service.herokuapp.com/",
+    "url" : "https://team-4-tcss-450-web-service.herokuapp.com",
     "order": [
       "Hello",
       "Params",
