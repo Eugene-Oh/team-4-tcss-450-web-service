@@ -1,7 +1,13 @@
 var nodemailer = require('nodemailer');
 
 
-
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: sender,
+      pass: 'pigeont4450'
+    }
+  });
 
 
 let sendEmail = (sender, receiver, subject, message) => {
@@ -14,13 +20,7 @@ let sendEmail = (sender, receiver, subject, message) => {
 
     //fake sending an email for now. Post a message to logs. 
 
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: sender,
-          pass: 'pigeont4450'
-        }
-      });
+
 
       var mailOptions = {
         from: sender,

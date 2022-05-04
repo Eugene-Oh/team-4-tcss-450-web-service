@@ -2,6 +2,7 @@
 const { response } = require('express')
 const { request } = require('express')
 const express = require('express')
+const res = require('express/lib/response')
 
 //Access the connection to Heroku Database
 const pool = require('../utilities').pool
@@ -114,6 +115,7 @@ router.post('/', (request, response, next) => {
                     success: true,
                     email: request.body.email
                 })
+                console.log(request.body.email);
                 sendEmail("team4tcss450@gmail.com", request.body.email, "Welcome to our App!", "Please verify your Email account.")
             })
             .catch((error) => {
