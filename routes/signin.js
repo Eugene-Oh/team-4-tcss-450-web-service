@@ -72,10 +72,7 @@ router.get('/', (request, response, next) => {
         })
     }
 }, (request, response) => {
-    const theQuery = `SELECT saltedhash, salt, Credentials.memberid, Members.verification FROM Credentials
-                      INNER JOIN Members ON
-                      Credentials.memberid=Members.memberid 
-                      WHERE Members.email=$1`
+    const theQuery = "SELECT saltedhash, salt, Credentials.memberid,  Members.verification FROM Credentials INNER JOIN Members ON Credentials.memberid=Members.memberid WHERE Members.email=$1"
     const values = [request.auth.email]
     pool.query(theQuery, values)
         .then(result => { 
@@ -92,7 +89,8 @@ router.get('/', (request, response, next) => {
             //Retrieve the salted-hash password provided from the DB
             let storedSaltedHash = result.rows[0].saltedhash 
 
-            let v = result.rows[0].Members.verification
+            //let v = result.rows[0].Members.verification
+            console.log(result);
 
             //Generate a hash based on the stored salt and the provided password
             let providedSaltedHash = generateHash(request.auth.password, salt)
@@ -113,7 +111,7 @@ router.get('/', (request, response, next) => {
                 //package and send the results
                 response.json({
                     success: true,
-                    verification: v,
+                    //verification: v,
                     message: 'Authentication successful!',
                     token: token
                 })
