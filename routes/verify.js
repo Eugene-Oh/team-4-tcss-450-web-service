@@ -6,18 +6,18 @@ const pool = require('../utilities').pool
 
 const router = express.Router()
 
-router.post('/:MemberID', (request, response) => {
+router.get('/:MemberID', (request, response) => {
     const { id } = request.params
     const theQuery = `UPDATE Members SET verification=1 WHERE memberid=$1`
+    console.log(id)
     pool.query(theQuery, id)
         .then(result => {
-            response.status(201).send({
+            response.status(200).send({
                 message: "success",
                 success: true,
             })
         })
         .catch((error) => {
-            console.log(theQuery);
             response.status(400).send({
                 message: "failure"
             })
