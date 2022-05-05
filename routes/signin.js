@@ -89,7 +89,7 @@ router.get('/', (request, response, next) => {
             //Retrieve the salted-hash password provided from the DB
             let storedSaltedHash = result.rows[0].saltedhash 
 
-            let v = result.rows[0];
+            let v = result.rows[0].verification;
             //console.log(result);
 
             //Generate a hash based on the stored salt and the provided password
