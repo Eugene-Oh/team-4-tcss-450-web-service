@@ -71,7 +71,7 @@ router.get('/', (request, response, next) => {
         })
     }
 }, (request, response) => {
-    const theQuery = `SELECT saltedhash, salt, Credentials.memberid FROM Credentials
+    const theQuery = `SELECT saltedhash, salt, Credentials.memberid, verification FROM Credentials
                       INNER JOIN Members ON
                       Credentials.memberid=Members.memberid 
                       WHERE Members.email=$1`
@@ -87,6 +87,8 @@ router.get('/', (request, response, next) => {
 
             //Retrieve the salt used to create the salted-hash provided from the DB
             let salt = result.rows[0].salt
+
+            let verification = results.rows[0].verification
             
             //Retrieve the salted-hash password provided from the DB
             let storedSaltedHash = result.rows[0].saltedhash 
@@ -110,6 +112,7 @@ router.get('/', (request, response, next) => {
                 //package and send the results
                 response.json({
                     success: true,
+                    verification: verification,
                     message: 'Authentication successful!',
                     token: token
                 })
