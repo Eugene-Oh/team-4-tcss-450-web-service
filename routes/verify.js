@@ -1,5 +1,8 @@
 //express is the framework we're going to use to handle requests
+const { response } = require('express')
 const express = require('express')
+const { noExceptions } = require('npm/lib/utils/parse-json')
+const sendEmail = require('../utilities').sendEmail
 
 //Access the connection to Heroku Database
 const pool = require('../utilities').pool
@@ -24,24 +27,14 @@ router.get('/:id', async (request, response) => {
         })
 })
 
-// router.post('/check', (request, response) => {
-//     const email = request.body.email
-//     const theQuery = `SELECT * FROM Members WHERE email=$1`
-//     console.log(email)
-//     console.log(theQuery)
-//     pool.query(SELECT * FROM Members WHERE email = [email],(err, result) => {
-//         console.log(result);
-//     })
-//     // //pool.query(theQuery, [email])
-//     //     .then(result => {
-//     //         console.log(result);
-//     //     })
-//     //     .catch((error) => {
-//     //         response.status(400).send({
-//     //             message: "FAILED"
-//     //         })
-//     //     })
-// })
+router.post('/email', (request, response) => {
+    const email = request.body.email
+    let link = "https://team-4-tcss-450-web-service.herokuapp.com/verify/" + request.body.memberid
+    sendEmail("team4tcss450@gmail.com", email,"Welcome to our App!", "Please verify your Email account.\n" + link)
+    response.status(200).send({
+        message: "success"
+    })
+})
 
 
 module.exports = router
