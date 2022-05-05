@@ -89,8 +89,8 @@ router.get('/', (request, response, next) => {
             //Retrieve the salted-hash password provided from the DB
             let storedSaltedHash = result.rows[0].saltedhash 
 
-            //let v = result.rows[0].Members.verification
-            console.log(result);
+            let v = result.rows[0];
+            //console.log(result);
 
             //Generate a hash based on the stored salt and the provided password
             let providedSaltedHash = generateHash(request.auth.password, salt)
@@ -111,7 +111,7 @@ router.get('/', (request, response, next) => {
                 //package and send the results
                 response.json({
                     success: true,
-                    //verification: v,
+                    verification: v,
                     message: 'Authentication successful!',
                     token: token
                 })
