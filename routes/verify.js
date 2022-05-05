@@ -6,7 +6,7 @@ const pool = require('../utilities').pool
 
 const router = express.Router()
 
-router.get('/:MemberID', (request, response) => {
+router.post('/:MemberID', (request, response) => {
     const { id } = request.params
     const theQuery = `UPDATE Members SET verification=1 WHERE memberid=$1`
     pool.query(theQuery, id)
