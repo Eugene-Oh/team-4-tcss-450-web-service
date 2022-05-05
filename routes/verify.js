@@ -9,7 +9,8 @@ const router = express.Router()
 router.get('/:id', async (request, response) => {
     const { id } = request.params
     const theQuery = `UPDATE members SET verification=1 WHERE memberid=$1`
-    await pool.query(theQuery, id)
+    
+    await pool.query(theQuery, [id])
         .then(result => {
             response.status(200).send({
                 message: "success",
@@ -18,7 +19,7 @@ router.get('/:id', async (request, response) => {
         })
         .catch((error) => {
             response.status(400).send({
-                message: id
+                message: "FAILED"
             })
         })
 })
