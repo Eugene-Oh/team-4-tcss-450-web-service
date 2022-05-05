@@ -6,11 +6,10 @@ const pool = require('../utilities').pool
 
 const router = express.Router()
 
-router.get('/:MemberID', (request, response) => {
+router.get('/:id', async (request, response) => {
     const { id } = request.params
-    const theQuery = `UPDATE Members SET verification=1 WHERE memberid=$1`
-    console.log(id)
-    pool.query(theQuery, id)
+    const theQuery = `UPDATE members SET verification=1 WHERE memberid=$1`
+    await pool.query(theQuery, id)
         .then(result => {
             response.status(200).send({
                 message: "success",
@@ -19,7 +18,7 @@ router.get('/:MemberID', (request, response) => {
         })
         .catch((error) => {
             response.status(400).send({
-                message: "failure"
+                message: id
             })
         })
 })
