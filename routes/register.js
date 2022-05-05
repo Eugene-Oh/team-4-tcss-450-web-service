@@ -112,7 +112,7 @@ router.post('/', (request, response, next) => {
         pool.query(theQuery, values)
             .then(result => {
                 //We successfully added the user!
-                response.status(201).send({
+                response.status(200).send({
                     success: true,
                     email: request.body.email
                 })

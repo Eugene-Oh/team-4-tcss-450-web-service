@@ -1,5 +1,6 @@
 //express is the framework we're going to use to handle requests
 const express = require('express')
+const { verify } = require('jsonwebtoken')
 
 //Access the connection to Heroku Database
 const pool = require('../utilities').pool
@@ -71,7 +72,7 @@ router.get('/', (request, response, next) => {
         })
     }
 }, (request, response) => {
-    const theQuery = `SELECT saltedhash, salt, Credentials.memberid FROM Credentials
+    const theQuery = `SELECT saltedhash, salt, Credentials.memberid, Members.verification FROM Credentials
                       INNER JOIN Members ON
                       Credentials.memberid=Members.memberid 
                       WHERE Members.email=$1`
@@ -90,6 +91,8 @@ router.get('/', (request, response, next) => {
             
             //Retrieve the salted-hash password provided from the DB
             let storedSaltedHash = result.rows[0].saltedhash 
+
+            let v = result.rows[0].Members.verification
 
             //Generate a hash based on the stored salt and the provided password
             let providedSaltedHash = generateHash(request.auth.password, salt)
@@ -110,6 +113,7 @@ router.get('/', (request, response, next) => {
                 //package and send the results
                 response.json({
                     success: true,
+                    verification: v,
                     message: 'Authentication successful!',
                     token: token
                 })
