@@ -108,6 +108,7 @@ router.post('/', (request, response, next) => {
 
         let theQuery = "INSERT INTO CREDENTIALS(MemberId, SaltedHash, Salt) VALUES ($1, $2, $3)"
         let values = [request.memberid, salted_hash, salt]
+        let link = "https://team-4-tcss-450-web-service.herokuapp.com/verify/" + request.memberid
         pool.query(theQuery, values)
             .then(result => {
                 //We successfully added the user!
@@ -116,7 +117,7 @@ router.post('/', (request, response, next) => {
                     email: request.body.email
                 })
                 console.log(request.body.email);
-                sendEmail("team4tcss450@gmail.com", request.body.email, "Welcome to our App!", "Please verify your Email account.")
+                sendEmail("team4tcss450@gmail.com", request.body.email, "Welcome to our App!", "Please verify your Email account.\n" + link)
             })
             .catch((error) => {
                 //log the error for debugging
