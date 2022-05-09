@@ -64,10 +64,17 @@ router.get('/:salt', async (request, response, next) => {
     const theQuery = `UPDATE members SET verification=1 WHERE memberid=$1`
     await pool.query(theQuery, [request.memberid])
     .then(result => {
-        response.status(200).send({
-            message: "success",
-            success: true,
-        })
+        // response.status(200).send({
+        //     message: "success",
+        //     success: true,
+        // })
+
+        response.writeHead(200, {'Content-Type': 'text/html'});
+
+        //write a response to the client
+        response.write('<h style="text-align: center" >Thank you for verifying your email, you may now close this window</h>'); 
+
+        response.end();
     })
     .catch((error) => {
         response.status(400).send({
