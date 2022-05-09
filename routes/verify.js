@@ -36,7 +36,7 @@ router.get('/:salt', async (request, response) => {
     await pool.query(getMemIdQuery, [salt])
         .then(result => {
             response.status(200).send({
-                id: result[0]
+                id: result.rows[0].memberid
             })
         })
         .catch((error) => {
