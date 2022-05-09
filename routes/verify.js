@@ -29,22 +29,33 @@ const router = express.Router()
  * @apiError (400: Incorrect member id) {String} message "FAILED"
  * 
  */ 
-router.get('/:id', async (request, response) => {
-    const { id } = request.params
-    const theQuery = `UPDATE members SET verification=1 WHERE memberid=$1`
-    
-    await pool.query(theQuery, [id])
+router.get('/:salt', async (request, response) => {
+    const { salt } = request.params
+    console.log(salt)
+    const getMemIdQuery = 'select memberid from Credentials where salt=$1'
+    await pool.query(getMemIdQuery, [salt])
         .then(result => {
             response.status(200).send({
-                message: "success",
-                success: true,
+                id: result[0]
             })
         })
         .catch((error) => {
-            response.status(400).send({
-                message: "FAILED"
-            })
+            console.log(error)
         })
+    // const theQuery = `UPDATE members SET verification=1 WHERE memberid=$1`
+    
+    // await pool.query(theQuery, [id])
+    //     .then(result => {
+    //         response.status(200).send({
+    //             message: "success",
+    //             success: true,
+    //         })
+    //     })
+    //     .catch((error) => {
+    //         response.status(400).send({
+    //             message: "FAILED"
+    //         })
+    //     })
 })
 
 // router.post('/email', (request, response) => {
