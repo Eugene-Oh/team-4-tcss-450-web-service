@@ -35,12 +35,16 @@ router.get('/:salt', async (request, response) => {
     const getMemIdQuery = 'select memberid from Credentials where salt=$1'
     await pool.query(getMemIdQuery, [salt])
         .then(result => {
-            response.status(200).send({
-                id: result.rows[0].memberid
-            })
+            // response.status(200).send({
+            //     memberid: result.rows[0].memberid
+            // })
+            request.memberid = result.rows[0].memberid;
+            next()
         })
         .catch((error) => {
-            console.log(error)
+            response.status(400).send({
+                message: "invaild link"
+            })
         })
     // const theQuery = `UPDATE members SET verification=1 WHERE memberid=$1`
     
@@ -56,6 +60,20 @@ router.get('/:salt', async (request, response) => {
     //             message: "FAILED"
     //         })
     //     })
+}, async (request, response) => {
+    const theQuery = `UPDATE members SET verification=1 WHERE memberid=$1`
+    await pool.query(theQuery, [request.memberid])
+    .then(result => {
+        response.status(200).send({
+            message: "success",
+            success: true,
+        })
+    })
+    .catch((error) => {
+        response.status(400).send({
+            message: "FAILED"
+        })
+    })
 })
 
 // router.post('/email', (request, response) => {
