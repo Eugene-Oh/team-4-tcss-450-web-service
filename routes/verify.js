@@ -29,7 +29,7 @@ const router = express.Router()
  * @apiError (400: Incorrect member id) {String} message "FAILED"
  * 
  */ 
-router.get('/:salt', async (request, response) => {
+router.get('/:salt', async (request, response, next) => {
     const { salt } = request.params
     console.log(salt)
     const getMemIdQuery = 'select memberid from Credentials where salt=$1'
