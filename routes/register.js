@@ -109,19 +109,7 @@ router.post('/', (request, response, next) => {
         let theQuery = "INSERT INTO CREDENTIALS(MemberId, SaltedHash, Salt) VALUES ($1, $2, $3)"
         let values = [request.memberid, salted_hash, salt]
 
-        // create jwt token
-        let token = jwt.sign(
-            {
-                "email": request.auth.email,
-                "memberid": result.rows[0].memberid
-            },
-            config.secret,
-            { 
-                expiresIn: '14 days' // expires in 14 days
-            }
-        )
-
-        let link = "https://team-4-tcss-450-web-service.herokuapp.com/verify/" + token
+        let link = "https://team-4-tcss-450-web-service.herokuapp.com/verify/" + salt
         pool.query(theQuery, values)
             .then(result => {
                 //We successfully added the user!
