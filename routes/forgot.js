@@ -92,7 +92,7 @@ router.post('/', async (request, response, next) => {
 router.get('/:oldSalt&:newSalt&:newSaltedHash', async (request, response, next) => {
     const { oldSalt } = request.params.oldSalt
     
-    const theQuery = "SELECT MemberID FROM Credentials WHERE Salt = $1"
+    const theQuery = 'SELECT MemberID FROM Credentials WHERE Salt = $1'
     const values = [oldSalt]
     
     await pool.query(theQuery, values)
