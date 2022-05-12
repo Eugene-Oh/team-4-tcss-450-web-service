@@ -93,16 +93,16 @@ router.get('/:oldSalt&:newSalt&:newSaltedHash', async (request, response, next) 
     const { oldSalt } = request.params.oldSalt
     
     const theQuery = 'SELECT MemberID FROM Credentials WHERE Salt = $1'
-    const values = [oldSalt]
     
-    await pool.query(theQuery, values)
+    await pool.query(theQuery, [oldSalt])
         .then(result => {
             request.memberid = result.rows[0].memberid
             next()
         })
         .catch((error) => {
             response.status(400).send({
-                message: "invalid link"
+                message: "invalid link",
+                salt: oldSalt
             })
         })
 }, async (request, response) => {
