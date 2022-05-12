@@ -82,16 +82,16 @@ router.post('/', async (request, response, next) => {
 
         let link = "https://team-4-tcss-450-web-service.herokuapp.com/forgot/" 
             + request.salt
-            + "&"
+            + "/"
             + salt
-            + "&"
+            + "/"
             + salted_hash
         sendEmail("team4tcss450@gmail.com", request.body.email, "Password reset", "Please click the following link to update your password. \n" + link)
 })
 
-router.get('/:oldSalt&:newSalt&:newSaltedHash', async (request, response, next) => {
-    const { oldSalt } = request.params.oldSalt
-    
+router.get('/:oldSalt/:newSalt/:newSaltedHash', async (request, response, next) => {
+    const oldSalt = request.params.oldSalt
+    console.log(oldSalt)
     const theQuery = 'SELECT MemberID FROM Credentials WHERE Salt = $1'
     
     await pool.query(theQuery, [oldSalt])
@@ -106,8 +106,8 @@ router.get('/:oldSalt&:newSalt&:newSaltedHash', async (request, response, next) 
             })
         })
 }, async (request, response) => {
-    const { newSalt } = request.params.newSalt
-    const { newSaltedHash } = request.params.newSaltedHash
+    const newSalt = request.params.newSalt
+    const newSaltedHash = request.params.newSaltedHash
     const theQuery = "UPDATE Credentials SET Salt = $1, SaltedHash = $2 WHERE MemberID = $3"
     const values = [newSalt, newSaltedHash, request.memberid]
     await pool.query(theQuery, values)
