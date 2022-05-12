@@ -89,12 +89,27 @@ router.post('/', async (request, response, next) => {
         sendEmail("team4tcss450@gmail.com", request.body.email, "Password reset", "Please click the following link to update your password. \n" + link)
 })
 
-router.get('/:oldSalt&:newSalt&:newSaltedHash', async (request, response) => {
+router.get('/:oldSalt&:newSalt&:newSaltedHash', async (request, response, next) => {
     const { oldSalt } = request.params.oldSalt
+    
+    const theQuery = "SELECT MemberID FROM Credentials WHERE Salt = $1"
+    const values = [oldSalt]
+    
+    await pool.query(theQuery, values)
+        .then(result => {
+            request.memberid = result.rows[0].memberid
+            next()
+        })
+        .catch((error) => {
+            response.status(400).send({
+                message: "invalid link"
+            })
+        })
+}, async (request, response) => {
     const { newSalt } = request.params.newSalt
     const { newSaltedHash } = request.params.newSaltedHash
-    const theQuery = "UPDATE Credentials SET Salt = $1, SaltedHash = $2 WHERE Salt = $3"
-    const values = [newSalt, newSaltedHash, oldSalt]
+    const theQuery = "UPDATE Credentials SET Salt = $1, SaltedHash = $2 WHERE MemberID = $3"
+    const values = [newSalt, newSaltedHash, request.memberid]
     await pool.query(theQuery, values)
         .then(result => {
             response.writeHead(200, {'Content-Type': 'text/html'})
