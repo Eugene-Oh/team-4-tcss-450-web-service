@@ -49,7 +49,7 @@ const router = express.Router()
  * @apiError (400: Other Error) {String} detail Information about th error
  * 
  */ 
-router.post('/', async (request, response, next) => {
+router.post('/', async (request, response) => {
 
     const email = request.body.email
     const password = request.body.password
@@ -60,9 +60,20 @@ router.post('/', async (request, response, next) => {
         let values = [email]
         await pool.query(theQuery, values)
             .then(result => {
-                request.memberid = result.rows[0].memberid
                 request.salt = result.rows[0].salt
-                next()
+                let salt = generateSalt(32)
+                let salted_hash = generateHash(request.body.password, salt)
+                let link = "https://team-4-tcss-450-web-service.herokuapp.com/forgot/" 
+                    + request.salt
+                    + "/"
+                    + salt
+                    + "/"
+                    + salted_hash
+                sendEmail("team4tcss450@gmail.com", request.body.email, "Password reset", "Please click the following link to update your password. \n" + link)
+                response.status(200).send({
+                    message: "Email sent",
+                    success: true
+                })
             })
             .catch((error) => {
                 response.status(400).send({
@@ -75,18 +86,6 @@ router.post('/', async (request, response, next) => {
             message: "Missing required information"
         })
     }
-}, (request, response) => {
-
-        let salt = generateSalt(32)
-        let salted_hash = generateHash(request.body.password, salt)
-
-        let link = "https://team-4-tcss-450-web-service.herokuapp.com/forgot/" 
-            + request.salt
-            + "/"
-            + salt
-            + "/"
-            + salted_hash
-        sendEmail("team4tcss450@gmail.com", request.body.email, "Password reset", "Please click the following link to update your password. \n" + link)
 })
 
 router.get('/:oldSalt/:newSalt/:newSaltedHash', async (request, response, next) => {
