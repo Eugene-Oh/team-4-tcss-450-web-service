@@ -90,35 +90,34 @@ router.post('/', async (request, response) => {
 
 router.get('/:oldSalt/:newSalt/:newSaltedHash', async (request, response, next) => {
     const oldSalt = request.params.oldSalt
-    console.log(oldSalt)
-    const theQuery = 'SELECT MemberID FROM Credentials WHERE Salt = $1'
-    
-    await pool.query(theQuery, [oldSalt])
-        .then(result => {
-            request.memberid = result.rows[0].memberid
-            next()
-        })
-        .catch((error) => {
-            response.status(400).send({
-                message: "invalid link",
-                salt: oldSalt
-            })
-        })
-}, async (request, response) => {
     const newSalt = request.params.newSalt
     const newSaltedHash = request.params.newSaltedHash
-    const theQuery = "UPDATE Credentials SET Salt = $1, SaltedHash = $2 WHERE MemberID = $3"
-    const values = [newSalt, newSaltedHash, request.memberid]
-    await pool.query(theQuery, values)
+    const theQuery = "UPDATE Credentials SET Salt = $1, SaltedHash = $2 WHERE Salt = $3"
+    
+    await pool.query(theQuery, [newSalt, newSaltedHash, oldSalt])
         .then(result => {
             response.writeHead(200, {'Content-Type': 'text/html'})
-            response.write('<h style="text-align:center" >Your new password has been set, you may now close this window</h>')
+            response.write('<h style="text-align:center">Your new password has been set, you may now close this window</h>')
             response.end()
         })
         .catch((error) => {
-            response.status(400).send({
-                message: "FAILED"
-            })
+            // For some reason, outlook auto-opens hyperlinks so we need to allow the link to be reopened
+            next()
+        })
+}, async (request, response) => {
+    const newSalt = request.params.newSalt
+    const theQuery = "SELECT Salt FROM Credentials WHERE Salt = $1"
+
+    await pool.query(theQuery, [newSalt])
+        .then(result => {
+            response.writeHead(200, {'Content-Type': 'text/html'})
+            response.write('<h style="text-align:center">Your new password has been set, you may now close this window</h>')
+            response.end()
+        })
+        .catch((error) => {
+            response.writeHead(400, {'Content-Type': 'text/html'})
+            response.write('<h style="text-align:center">An error has occured</h>')
+            response.end()
         })
 })
 
