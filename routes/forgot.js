@@ -60,6 +60,10 @@ router.post('/', async (request, response) => {
         let values = [email]
         await pool.query(theQuery, values)
             .then(result => {
+                response.status(200).send({
+                    message: "Email sent",
+                    success: true
+                })
                 request.salt = result.rows[0].salt
                 let salt = generateSalt(32)
                 let salted_hash = generateHash(request.body.password, salt)
@@ -70,10 +74,6 @@ router.post('/', async (request, response) => {
                     + "/"
                     + salted_hash
                 sendEmail("team4tcss450@gmail.com", request.body.email, "Password reset", "Please click the following link to update your password. \n" + link)
-                response.status(200).send({
-                    message: "Email sent",
-                    success: true
-                })
             })
             .catch((error) => {
                 response.status(400).send({
