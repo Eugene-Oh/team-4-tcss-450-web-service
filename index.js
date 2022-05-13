@@ -33,7 +33,7 @@ app.use('/chats', middleware.checkToken, require('./routes/chats.js'))
 
 app.use('/forgot', require('./routes/forgot.js'))
 
-
+app.use('/contact', middleware.checkToken, require('./routes/contact.js'))
 
 
 /*
