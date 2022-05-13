@@ -124,6 +124,54 @@ router.post('/', (request, response, next) => {
         })
 })
 
+// delete existing contact
+router.post('/delete', (request, response, next) => {
+    //get memeberBid using email
+    const getMemBIDQuery = "SELECT MemberID FROM Members WHERE Email = $1";
+    pool.query(getMemBIDQuery, [request.body.email])
+        .then(result => {
+            request.body.memberid = result.rows[0].memberid
+            next();
+        })
+        .catch((error) => {{
+            response.status(400).send({
+                message: "email doesnt exist in system"
+            })
+        }})
+}, (request, response, next) => {
+    // check to see if memberB is already in memberA's contact
+    const checkQuery = "SELECT * FROM Contacts WHERE memberid_a = $1 AND memberid_b=$2"
+    pool.query(checkQuery, [request.decoded.memberid, request.body.memberid])
+        .then(result => {
+            if(result.rows.length > 0) {
+                next()
+            } else if (result.rows.length === 0) {
+                response.status(200).send({
+                    // this should never happen
+                    message: "This contact is not a contact"
+                })
+            }
+        })
+        .catch((error) => {
+            response.status(400).send({
+                message:"error checking if member is already a contact"
+            })
+        }) 
 
+}, (request, response, next) => {
+    // remove memberB from memberA's contact
+    const deleteQuery = "DELETE FROM Contacts WHERE memberid_a = $1 AND memberid_b=$2"
+    pool.query(deleteQuery, [request.decoded.memberid, request.body.memberid])
+        .then(result => {
+            response.status(200).send({
+                message:"successfully remove from contact"
+            })
+        })
+        .catch((error) => {
+            response.status(400).send({
+                message:"error removing member from contact"
+            })
+        })
+})
 
 module.exports = router
