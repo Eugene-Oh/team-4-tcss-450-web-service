@@ -35,6 +35,8 @@ app.use('/forgot', require('./routes/forgot.js'))
 
 app.use('/contact', middleware.checkToken, require('./routes/contact.js'))
 
+app.use('/change', require('./routes/change.js'))
+
 
 /*
  * Return HTML for the / end point. 
