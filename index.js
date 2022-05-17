@@ -29,7 +29,7 @@ app.use('/verify', require('./routes/verify.js'))
 
 app.use('/messages', middleware.checkToken, require('./routes/messages.js'))
 
-app.use('/chats', middleware.checkToken, require('./routes/chats.js'))
+app.use('/chats', require('./routes/chats.js'))
 
 app.use('/forgot', require('./routes/forgot.js'))
 

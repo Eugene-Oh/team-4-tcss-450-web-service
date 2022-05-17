@@ -64,8 +64,8 @@ router.post("/", (request, response, next) => {
         })
 })
 
-router.post('/getRooms', async (request, response) => {
-    const email = request.body.email
+router.get('/getRooms', async (request, response) => {
+    const email = request.headers['email']
     const theQuery = "SELECT ChatID FROM Members JOIN ChatMembers USING (MemberID) WHERE Email = $1"
     await pool.query(theQuery, [email])
         .then(result => {
