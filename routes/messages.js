@@ -62,7 +62,7 @@ router.post("/", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat ID not found"
+                    message: "The chat room was not found."
                 })
             } else {
                 next()
@@ -84,7 +84,7 @@ router.post("/", (request, response, next) => {
                         next()
                     } else {
                         response.status(400).send({
-                            message: "user not in chat"
+                            message: "You are not a part of this chat."
                         })
                     }
                 }).catch(error => {
@@ -197,7 +197,7 @@ router.get("/:chatId?/:messageId?", (request, response, next) => {
             .then(result => {
                 if (result.rowCount == 0) {
                     response.status(404).send({
-                        message: "Chat ID not found"
+                        message: "The chat room was not found."
                     })
                 } else {
                     next()

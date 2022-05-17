@@ -130,7 +130,7 @@ router.put("/:chatId/:email", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "email not found"
+                    message: "The email was not found."
                 })
             } else {
                 request.params.email = result.rows[0].memberid
@@ -151,7 +151,7 @@ router.put("/:chatId/:email", (request, response, next) => {
             .then(result => {
                 if (result.rowCount > 0) {
                     response.status(400).send({
-                        message: "user already joined"
+                        message: "The user is already in the chat."
                     })
                 } else {
                     next()
@@ -226,7 +226,7 @@ router.get("/:chatId", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat ID not found"
+                    message: "The chat room was not found."
                 })
             } else {
                 next()
@@ -303,7 +303,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat ID not found"
+                    message: "The chat room was not found"
                 })
             } else {
                 next()
@@ -323,7 +323,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "email not found"
+                    message: "The email was not found."
                 })
             } else {
                 request.params.email = result.rows[0].memberid
@@ -346,7 +346,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
                     next()
                 } else {
                     response.status(400).send({
-                        message: "user not in chat"
+                        message: "The user was not found in the chat"
                     })
                 }
             }).catch(error => {
