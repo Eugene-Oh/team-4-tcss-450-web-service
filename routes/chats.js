@@ -64,6 +64,23 @@ router.post("/", (request, response, next) => {
         })
 })
 
+router.post('/getRooms', async (request, response) => {
+    const email = request.body.email
+    const theQuery = "SELECT ChatID FROM Members JOIN ChatMembers USING (MemberID) WHERE Email = $1"
+    await pool.query(theQuery, [email])
+        .then(result => {
+            response.status(200).send({
+                success: true,
+                rooms: result.rows
+            })
+        })
+        .catch((error) => {
+            response.status(400).send({
+                success: false
+            })
+        })
+})
+
 /**
  * @api {put} /chats/:chatId? Request add a user to a chat
  * @apiName PutChats

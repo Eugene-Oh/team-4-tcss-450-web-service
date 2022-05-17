@@ -11,6 +11,28 @@ const generateSalt = require('../utilities').generateSalt
 
 const router = express.Router()
 
+/**
+ * @api {post} /change Request to change a users password
+ * @apiName ChangeRequest
+ * @apiGroup Change
+ * 
+ * @apiParam {String} email a users email *unique
+ * @apiParam {String} oldPassword the users current password
+ * @apiParam {String} newPassword the users new password
+ * 
+ * @apiSuccess {String} message "Password successfully changed!"
+ * 
+ *  * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "message": "Password successfully changed!"
+ *     }
+ * 
+ * @apiError (404: User Not Found) {String} message "User not found"
+ * 
+ * @apiError (400: Invalid Credentials) {String} message "Credentials did not match"
+ * 
+ */ 
 router.post('/', async (request, response, next) => {
 
     const email = request.body.email
@@ -54,7 +76,7 @@ router.post('/', async (request, response, next) => {
             })
         })
         .catch((err) => {
-            response.status(400).send({
+            response.status(404).send({
                 message: "User not found"
             })
         })
