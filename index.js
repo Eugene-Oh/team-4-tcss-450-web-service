@@ -25,6 +25,8 @@ app.use('/auth', require('./routes/register.js'))
 
 app.use('/verify', require('./routes/verify.js'))
 
+app.use('/weather', require('./routes/weather.js')) // for weather
+
 
 /*
  * Return HTML for the / end point. 
