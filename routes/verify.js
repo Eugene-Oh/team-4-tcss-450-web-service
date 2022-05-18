@@ -31,7 +31,7 @@ const router = express.Router()
  */ 
 router.get('/:salt', async (request, response, next) => {
     const { salt } = request.params
-    console.log(salt)
+    //console.log(salt)
     const getMemIdQuery = 'select memberid from Credentials where salt=$1'
     await pool.query(getMemIdQuery, [salt])
         .then(result => {

@@ -174,4 +174,23 @@ router.post('/delete', (request, response, next) => {
         })
 })
 
+// get user's information require user's email
+router.get('/:email', (request, response, next) => {
+    const {email} = request.params;
+    // console.log(request.decoded)
+    //let userInfo = request.decoded;
+    //console.log(userInfo.memberid);
+    const theQuery = "SELECT * FROM  Members WHERE email = $1";
+
+    pool.query(theQuery, [email])
+        .then(result => {
+            response.status(200).send(result.rows[0]);
+        })
+        .catch((error) => {
+            response.status(400).send({
+                message: "error"
+            })
+        })
+})
+
 module.exports = router
