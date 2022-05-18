@@ -10,23 +10,20 @@ const pool = require('../utilities').pool
 const router = express.Router()
 
 /**
- * @api {get} /verify/:id Verify a member using their member id
+ * @api {get} /verify/:salt Verify a member using their salt
  * @apiName GetVerify
  * @apiGroup Verify
  * 
- * @apiHeader {String} authorization "username:password" uses Basic Auth 
- * 
- * @apiSuccess {String} message "success"
- * @apiSuccess {boolean} success true when the verification column is updated
+ * @apiParam {String} salt the users salt
  * 
  *  * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *       "message": "success"
- *       "success": true
+ *       "message": "Thank you for verifying your email, you may now close this window"
  *     }
  * 
  * @apiError (400: Incorrect member id) {String} message "FAILED"
+ * @apiError (400: Invalid link) {String} message "invalid link"
  * 
  */ 
 router.get('/:salt', async (request, response, next) => {
