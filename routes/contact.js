@@ -1,5 +1,6 @@
 // express is the framework we're going to use to handle requests
 const express = require('express')
+const req = require('express/lib/request')
 const res = require('express/lib/response')
 
 //Access the connection to Heroku Database
@@ -175,8 +176,8 @@ router.post('/delete', (request, response, next) => {
 })
 
 // get user's information require user's email
-router.get('/user', (request, response, next) => {
-    const email = request.decoded.email;
+router.get('/:email', (request, response, next) => {
+    const {email} = request.params;
     //console.log(request.decoded.email);
     // console.log(request.decoded)
     //let userInfo = request.decoded;
