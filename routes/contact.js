@@ -175,8 +175,9 @@ router.post('/delete', (request, response, next) => {
 })
 
 // get user's information require user's email
-router.get('/:email', (request, response, next) => {
-    const {email} = request.params;
+router.get('/user', (request, response, next) => {
+    const email = request.decoded.email;
+    //console.log(request.decoded.email);
     // console.log(request.decoded)
     //let userInfo = request.decoded;
     //console.log(userInfo.memberid);
