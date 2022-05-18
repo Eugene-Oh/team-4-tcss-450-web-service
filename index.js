@@ -27,10 +27,7 @@ app.use('/auth', middleware.checkToken, require('./routes/pushyregister.js'))
 
 app.use('/verify', require('./routes/verify.js'))
 
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 app.use('/weather', require('./routes/weather.js')) // for weather
 
 app.use('/messages', middleware.checkToken, require('./routes/messages.js'))
@@ -42,11 +39,8 @@ app.use('/forgot', require('./routes/forgot.js'))
 app.use('/contact', middleware.checkToken, require('./routes/contact.js'))
 
 app.use('/change', require('./routes/change.js'))
-<<<<<<< Updated upstream
-=======
 
 
->>>>>>> Stashed changes
 
 
 /*
