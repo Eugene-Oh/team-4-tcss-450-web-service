@@ -23,9 +23,23 @@ app.use('/auth', require('./routes/signin.js'))
 
 app.use('/auth', require('./routes/register.js'))
 
+app.use('/auth', middleware.checkToken, require('./routes/pushyregister.js'))
+
 app.use('/verify', require('./routes/verify.js'))
 
+<<<<<<< HEAD
 app.use('/weather', require('./routes/weather.js')) // for weather
+=======
+app.use('/messages', middleware.checkToken, require('./routes/messages.js'))
+
+app.use('/chats', middleware.checkToken, require('./routes/chats.js'))
+
+app.use('/forgot', require('./routes/forgot.js'))
+
+app.use('/contact', middleware.checkToken, require('./routes/contact.js'))
+
+app.use('/change', require('./routes/change.js'))
+>>>>>>> 28b62e4e108f485e1677f37e4f646fb0672ae154
 
 
 /*

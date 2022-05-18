@@ -108,7 +108,8 @@ router.post('/', (request, response, next) => {
 
         let theQuery = "INSERT INTO CREDENTIALS(MemberId, SaltedHash, Salt) VALUES ($1, $2, $3)"
         let values = [request.memberid, salted_hash, salt]
-        let link = "https://team-4-tcss-450-web-service.herokuapp.com/verify/" + request.memberid
+
+        let link = "https://team-4-tcss-450-web-service.herokuapp.com/verify/" + salt
         pool.query(theQuery, values)
             .then(result => {
                 //We successfully added the user!

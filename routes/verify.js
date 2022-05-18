@@ -29,22 +29,58 @@ const router = express.Router()
  * @apiError (400: Incorrect member id) {String} message "FAILED"
  * 
  */ 
-router.get('/:id', async (request, response) => {
-    const { id } = request.params
-    const theQuery = `UPDATE members SET verification=1 WHERE memberid=$1`
-    
-    await pool.query(theQuery, [id])
+router.get('/:salt', async (request, response, next) => {
+    const { salt } = request.params
+    //console.log(salt)
+    const getMemIdQuery = 'select memberid from Credentials where salt=$1'
+    await pool.query(getMemIdQuery, [salt])
         .then(result => {
-            response.status(200).send({
-                message: "success",
-                success: true,
-            })
+            // response.status(200).send({
+            //     memberid: result.rows[0].memberid
+            // })
+            request.memberid = result.rows[0].memberid;
+            next()
         })
         .catch((error) => {
             response.status(400).send({
-                message: "FAILED"
+                message: "invaild link"
             })
         })
+    // const theQuery = `UPDATE members SET verification=1 WHERE memberid=$1`
+    
+    // await pool.query(theQuery, [id])
+    //     .then(result => {
+    //         response.status(200).send({
+    //             message: "success",
+    //             success: true,
+    //         })
+    //     })
+    //     .catch((error) => {
+    //         response.status(400).send({
+    //             message: "FAILED"
+    //         })
+    //     })
+}, async (request, response) => {
+    const theQuery = `UPDATE members SET verification=1 WHERE memberid=$1`
+    await pool.query(theQuery, [request.memberid])
+    .then(result => {
+        // response.status(200).send({
+        //     message: "success",
+        //     success: true,
+        // })
+
+        response.writeHead(200, {'Content-Type': 'text/html'});
+
+        //write a response to the client
+        response.write('<h style="text-align: center" >Thank you for verifying your email, you may now close this window</h>'); 
+
+        response.end();
+    })
+    .catch((error) => {
+        response.status(400).send({
+            message: "FAILED"
+        })
+    })
 })
 
 // router.post('/email', (request, response) => {
