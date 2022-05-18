@@ -28,7 +28,7 @@ router.get("/",(req, res) => {
     // for info on use of tilde (`) making a String literal, see below. 
     //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
    
-    let url = `https://api.openweathermap.org/data/2.5/onecall?lat=47.2529&lon=122.443&units=imperial&exclude=alerts&appid=0757b2b6f8d336798e66e507f6b9fbe7`
+    let url = `https://api.openweathermap.org/data/2.5/onecall?lat=47.2529&lon=-122.443&units=imperial&exclude=alerts&appid=0757b2b6f8d336798e66e507f6b9fbe7`
     //let url2 = `https://api.openweathermap.org/data/2.5/weather?q={city name}&appid=API_KEY` // url2gives lon and lat info to pass into url
     
     //find the query string (parameters) sent to this end point and pass them on to
