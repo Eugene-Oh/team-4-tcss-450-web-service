@@ -18,35 +18,25 @@ const sendEmail = require('../utilities').sendEmail
 const router = express.Router()
 
 /**
- * @api {post} /auth Request to register a user
- * @apiName PostAuth
- * @apiGroup Auth
+ * @api {post} /forgot Request to change password
+ * @apiName PostForgot
+ * @apiGroup Forgot
  * 
- * @apiParam {String} first a users first name
- * @apiParam {String} last a users last name
  * @apiParam {String} email a users email *unique
  * @apiParam {String} password a users password
- * @apiParam {String} [username] a username *unique, if none provided, email will be used
  * 
  * @apiParamExample {json} Request-Body-Example:
  *  {
- *      "first":"Charles",
- *      "last":"Bryan",
  *      "email":"cfb3@fake.email",
  *      "password":"test12345"
  *  }
  * 
- * @apiSuccess (Success 201) {boolean} success true when the name is inserted
- * @apiSuccess (Success 201) {String} email the email of the user inserted 
+ * @apiSuccess (Success 201) {boolean} success true when user is found
+ * @apiSuccess (Success 201) {String} message "Email sent" 
  * 
- * @apiError (400: Missing Parameters) {String} message "Missing required information"
+ * @apiError (400: SQL error) {String} message "other error, see detail"
  * 
- * @apiError (400: Username exists) {String} message "Username exists"
- * 
- * @apiError (400: Email exists) {String} message "Email exists"
- *  
- * @apiError (400: Other Error) {String} message "other error, see detail"
- * @apiError (400: Other Error) {String} detail Information about th error
+ * @apiError (400: User not found) {String} message "Missing required information"
  * 
  */ 
 router.post('/', async (request, response) => {
@@ -90,35 +80,17 @@ router.post('/', async (request, response) => {
 
 
 /**
- * @api {post} /auth Request to register a user
- * @apiName PostAuth
- * @apiGroup Auth
+ * @api {post} /forgot/:oldSalt/:newSalt/:newSaltedHash Request to register a user
+ * @apiName PostForgot
+ * @apiGroup Forgot
  * 
- * @apiParam {String} first a users first name
- * @apiParam {String} last a users last name
- * @apiParam {String} email a users email *unique
- * @apiParam {String} password a users password
- * @apiParam {String} [username] a username *unique, if none provided, email will be used
+ * @apiParam {String} oldSalt the users old salt
+ * @apiParam {String} newSalt the users new salt
+ * @apiParam {String} newSaltedHash the users new salted hash
  * 
- * @apiParamExample {json} Request-Body-Example:
- *  {
- *      "first":"Charles",
- *      "last":"Bryan",
- *      "email":"cfb3@fake.email",
- *      "password":"test12345"
- *  }
+ * @apiSuccess (Success 201) {String} messasge "Your new password has been set, you may now close this window" 
  * 
- * @apiSuccess (Success 201) {boolean} success true when the name is inserted
- * @apiSuccess (Success 201) {String} email the email of the user inserted 
- * 
- * @apiError (400: Missing Parameters) {String} message "Missing required information"
- * 
- * @apiError (400: Username exists) {String} message "Username exists"
- * 
- * @apiError (400: Email exists) {String} message "Email exists"
- *  
- * @apiError (400: Other Error) {String} message "other error, see detail"
- * @apiError (400: Other Error) {String} detail Information about th error
+ * @apiError (400: Other Error) {String} message "An error has occured"
  * 
  */ 
 router.get('/:oldSalt/:newSalt/:newSaltedHash', async (request, response, next) => {

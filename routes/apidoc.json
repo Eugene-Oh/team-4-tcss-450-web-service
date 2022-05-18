@@ -11,6 +11,12 @@
       "DemoSql",
       "Auth",
       "Phish",
-      "Verify"
+      "Verify",
+      "Weather",
+      "Messages",
+      "Chats",
+      "Forgot",
+      "Contact",
+      "Change"
     ]
   }

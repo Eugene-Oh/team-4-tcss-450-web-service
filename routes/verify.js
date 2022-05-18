@@ -31,13 +31,9 @@ const router = express.Router()
  */ 
 router.get('/:salt', async (request, response, next) => {
     const { salt } = request.params
-    //console.log(salt)
     const getMemIdQuery = 'select memberid from Credentials where salt=$1'
     await pool.query(getMemIdQuery, [salt])
         .then(result => {
-            // response.status(200).send({
-            //     memberid: result.rows[0].memberid
-            // })
             request.memberid = result.rows[0].memberid;
             next()
         })
@@ -46,32 +42,13 @@ router.get('/:salt', async (request, response, next) => {
                 message: "invaild link"
             })
         })
-    // const theQuery = `UPDATE members SET verification=1 WHERE memberid=$1`
-    
-    // await pool.query(theQuery, [id])
-    //     .then(result => {
-    //         response.status(200).send({
-    //             message: "success",
-    //             success: true,
-    //         })
-    //     })
-    //     .catch((error) => {
-    //         response.status(400).send({
-    //             message: "FAILED"
-    //         })
-    //     })
 }, async (request, response) => {
     const theQuery = `UPDATE members SET verification=1 WHERE memberid=$1`
     await pool.query(theQuery, [request.memberid])
     .then(result => {
-        // response.status(200).send({
-        //     message: "success",
-        //     success: true,
-        // })
 
         response.writeHead(200, {'Content-Type': 'text/html'});
 
-        //write a response to the client
         response.write('<h style="text-align: center" >Thank you for verifying your email, you may now close this window</h>'); 
 
         response.end();
@@ -82,14 +59,5 @@ router.get('/:salt', async (request, response, next) => {
         })
     })
 })
-
-// router.post('/email', (request, response) => {
-//     const email = request.body.email
-//     let link = "https://team-4-tcss-450-web-service.herokuapp.com/verify/" + request.body.memberid
-//     sendEmail("team4tcss450@gmail.com", email,"Welcome to our App!", "Please verify your Email account.\n" + link)
-//     response.status(200).send({
-//         message: "success"
-//     })
-// })
 
 module.exports = router

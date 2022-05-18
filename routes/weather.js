@@ -14,7 +14,7 @@ var router = express.Router()
  * @api {get} Live Active Weather Data from OpenWeatherMap
  * @apiName OpenWeatherMap
  * @apiGroup OpenWeatherMap
- * @apiHeader {String} 
+ * @apiHeader {String} s
  * @apiDescription This end point is a pass through to the openweathermap.org API. 
  * All parameters will pass on to https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid=API_KEY.
  */ 

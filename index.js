@@ -1,15 +1,14 @@
-//express is the framework we're going to use to handle requests
+//Express framework to handle requests
 const express = require('express')
 //Create a new instance of express
 const app = express()
-
 //Access the connection to Heroku Database
 const pool = require('./utilities').pool
-
+//Access middleware functions
 let middleware = require('./middleware')
 
 /*
- * This middleware function parses JASOn in the body of POST requests
+ * This middleware function parses JSON in the body of POST requests
  */
 app.use(express.json())
 
@@ -18,30 +17,26 @@ app.use(express.json())
  * request parameters.
  */
 app.use(middleware.jsonErrorInBody)
-
+//Sign-in route
 app.use('/auth', require('./routes/signin.js'))
-
+//Register route
 app.use('/auth', require('./routes/register.js'))
-
+//Pushy route
 app.use('/auth', middleware.checkToken, require('./routes/pushyregister.js'))
-
+//Email verification route
 app.use('/verify', require('./routes/verify.js'))
-
-
-app.use('/weather', require('./routes/weather.js')) // for weather
-
+//Weather route
+app.use('/weather', require('./routes/weather.js'))
+//Messages route
 app.use('/messages', middleware.checkToken, require('./routes/messages.js'))
-
+//Chat route
 app.use('/chats', middleware.checkToken, require('./routes/chats.js'))
-
+//Forgot password route
 app.use('/forgot', require('./routes/forgot.js'))
-
+//Contacts route
 app.use('/contact', middleware.checkToken, require('./routes/contact.js'))
-
+//Change password route
 app.use('/change', require('./routes/change.js'))
-
-
-
 
 /*
  * Return HTML for the / end point. 
