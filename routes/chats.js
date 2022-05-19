@@ -1,12 +1,11 @@
-//express is the framework we're going to use to handle requests
 const express = require('express')
 
-//Access the connection to Heroku Database
 const pool = require('../utilities/exports').pool
 
 const router = express.Router()
 
 const validation = require('../utilities').validation
+
 let isStringProvided = validation.isStringProvided
 
 /**
@@ -64,6 +63,22 @@ router.post("/", (request, response, next) => {
         })
 })
 
+/**
+ * @api {get} /chats/getRooms Request to get the chat rooms a user is in
+ * @apiName GetChatRooms
+ * @apiGroup Chats
+ * 
+ * @apiHeader {String} authorization Valid JSON Web Token JWT
+ * @apiHeader {String} email the email used to identify the user
+ * 
+ * @apiSuccess {boolean} success true
+ * @apiSuccess {JSONArray[]} rooms list of rooms a user is a part of
+ * 
+ * @apiError (404: User not found) {boolean} success false
+ * @apiError (404: user not found) {String} message "User not found"
+ * 
+ * @apiUse JSONError
+ */ 
 router.get('/getRooms', async (request, response) => {
     const email = request.headers['email']
     const theQuery = "SELECT ChatID, name FROM Members JOIN ChatMembers USING (MemberID) JOIN Chats USING (ChatID) WHERE Email = $1"
@@ -75,8 +90,9 @@ router.get('/getRooms', async (request, response) => {
             })
         })
         .catch((error) => {
-            response.status(400).send({
-                success: false
+            response.status(404).send({
+                success: false,
+                message: "User not found"
             })
         })
 })

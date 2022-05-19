@@ -1,9 +1,9 @@
 const express = require('express')
-const { noExceptions } = require('npm/lib/utils/parse-json')
 
 const pool = require('../utilities').pool
 
 const validation = require('../utilities').validation
+
 let isStringProvided = validation.isStringProvided
 
 const generateHash = require('../utilities').generateHash
@@ -12,15 +12,15 @@ const generateSalt = require('../utilities').generateSalt
 const router = express.Router()
 
 /**
- * @api {post} /change Request to change a users password
- * @apiName ChangeRequest
+ * @api {post} /change Change a users password
+ * @apiName PostChangePassword
  * @apiGroup Change
  * 
- * @apiParam {String} email a users email *unique
+ * @apiParam {String} email the users email
  * @apiParam {String} oldPassword the users current password
  * @apiParam {String} newPassword the users new password
  * 
- * @apiSuccess {String} message "Password successfully changed!"
+ * @apiSuccess (200: Success) {String} message "Password successfully changed!"
  * 
  *  * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 200 OK
@@ -55,11 +55,6 @@ router.post('/', async (request, response, next) => {
                 }
             })
             .catch((err) => {
-                //log the error
-                console.log("Error on SELECT************************")
-                console.log(err)
-                console.log("************************")
-                console.log(err.stack)
                 response.status(400).send({
                     message: err.detail
                 })

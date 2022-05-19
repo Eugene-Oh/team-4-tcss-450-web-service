@@ -14,7 +14,7 @@ var router = express.Router()
  * @api {get} Live Active Weather Data from OpenWeatherMap
  * @apiName OpenWeatherMap
  * @apiGroup OpenWeatherMap
- * @apiHeader {String} 
+ * @apiHeader {String} s
  * @apiDescription This end point is a pass through to the openweathermap.org API. 
  * All parameters will pass on to https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid=API_KEY.
  */ 
@@ -28,7 +28,7 @@ router.get("/",(req, res) => {
     // for info on use of tilde (`) making a String literal, see below. 
     //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
    
-    let url = `https://api.openweathermap.org/data/2.5/onecall?lat=47.2529&lon=122.443&units=imperial&exclude=alerts&appid=0757b2b6f8d336798e66e507f6b9fbe7`
+    let url = `https://api.openweathermap.org/data/2.5/onecall?lat=47.2529&lon=-122.443&units=imperial&exclude=alerts&appid=0757b2b6f8d336798e66e507f6b9fbe7`
     //let url2 = `https://api.openweathermap.org/data/2.5/weather?q={city name}&appid=API_KEY` // url2gives lon and lat info to pass into url
     
     //find the query string (parameters) sent to this end point and pass them on to

@@ -1,31 +1,18 @@
-// express is the framework we're going to use to handle requests
 const express = require('express')
-const req = require('express/lib/request')
-const res = require('express/lib/response')
 
-//Access the connection to Heroku Database
 const pool = require('../utilities').pool
 
 const validation = require('../utilities').validation
-let isStringProvided = validation.isStringProvided
-
-//Pull in the JWT module along with out a secret key
-const jwt = require('jsonwebtoken')
-const config = {
-    secret: process.env.JSON_WEB_TOKEN
-}
 
 const router = express.Router()
 
-// router.get('/', (request, response, next) => {
-//     console.log("test");
-//     response.status(200).send({message:"welcome to contact"})
-// })
-
 /** 
  * @api {get} /contact Request get contacts
- * @apiName Getcontact
- * @apiGroup contact
+ * @apiName GetContact
+ * @apiGroup Contact
+ * 
+ * @apiHeader {String} authorization Valid JSON Web Token JWT
+ * @apiSuccess (Success 200) {JSONArray[]} the list of contacts of a user
  * 
  *  * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 201 OK
@@ -34,11 +21,14 @@ const router = express.Router()
  *       "message": "Authentication successful!",
  *       "token": "eyJhbGciO...abc123"
  *     }
+ * 
+ * @apiError (400: Error) {String} message "error"
+ * 
  */
- router.get('/', (request, response, next) => {
-    // console.log(request.decoded)
+ router.get('/', (request, response) => {
+
     let userInfo = request.decoded;
-    //console.log(userInfo.memberid);
+
     const theQuery = "SELECT memberid_a, memberid_b, firstname, lastname, email FROM Contacts INNER JOIN Members on (Contacts.memberid_b = Members.MemberID) WHERE Contacts.memberid_a = $1;"
 
     pool.query(theQuery, [userInfo.memberid])
@@ -50,26 +40,41 @@ const router = express.Router()
                 message: "error"
             })
         })
+
 })
 
-// add new contact
+/** 
+ * @api {post} /contact Add a contact
+ * @apiName PostContact
+ * @apiGroup Contact
+ * 
+ * @apiHeader {String} authorization Valid JSON Web Token JWT
+ * @apiSuccess (Success 200) {JSONObject} newContact the contact added
+ * @apiSuccess (Success 200) {String} message "contact successfully added"
+ * 
+ *  * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 201 OK
+ *     {
+ *       "newContact": result.rows[0]
+ *       "message": "Authentication successful!"
+ *     }
+ * 
+ * @apiError (400: User not found) {String} message "email doesnt exist in system"
+ * 
+ * @apiError (400: SQL error) {String} message "error checking if member is alread a contact"
+ * 
+ * @apiError (400: Failed to add member) {String} message "failed to add member"
+ * 
+ * @apiError (400: User not found) {String} message "Member does not exist"
+ * 
+ */
 router.post('/', (request, response, next) => {
-    // console.log(request.decoded.memberid)
-    // console.log(request.body.email)
-    // let memberAID = request.decoded.memberid;
-    // let MemberBEmail = request.body.email;
-    // check for valid email
 
-    // get memberBID
     const getMemBIDQuery = "SELECT MemberID FROM Members WHERE Email = $1";
+
     pool.query(getMemBIDQuery, [request.body.email])
         .then(result => {
-            // console.log(result.rows[0].memberid)
-            // response.status(200).send({
-            //     message: "sup sup"
-            // })
             request.body.memberid = result.rows[0].memberid
-            //console.log(request.body);
             next();
         })
         .catch((error) => {{
@@ -78,12 +83,11 @@ router.post('/', (request, response, next) => {
             })
         }})
 }, (request, response, next) => {
-    // check to see if memberB is already in memberA's contact
     const checkQuery = "SELECT * FROM Contacts WHERE memberid_a = $1 AND memberid_b=$2"
     pool.query(checkQuery, [request.decoded.memberid, request.body.memberid])
         .then(result => {
             if(result.rows.length > 0) {
-                response.status(200).send({
+                response.status(400).send({
                     message: "This contact has already been added"
                 })
             } else if (result.rows.length === 0) {
@@ -96,7 +100,6 @@ router.post('/', (request, response, next) => {
             })
         }) 
 }, (request, response, next) => {
-    // add memberB to memberA's contact
     const addMemBQuery = "INSERT INTO Contacts(MemberID_A, MemberID_B) VALUES ($1, $2)"
     pool.query(addMemBQuery, [request.decoded.memberid, request.body.memberid])
         .then(result => {
@@ -107,8 +110,7 @@ router.post('/', (request, response, next) => {
                 message:"fail to add member"
             })
         })
-}, (request, response, next) =>{
-    // get new member information and send it
+}, (request, response) =>{
     const MemBInfoQuery = "SELECT * FROM Members WHERE MemberID=$1"
     pool.query(MemBInfoQuery, [request.body.memberid])
         .then(result => {
@@ -125,9 +127,27 @@ router.post('/', (request, response, next) => {
         })
 })
 
-// delete existing contact
+/** 
+ * @api {post} /contact/delete Delete a contact
+ * @apiName DeleteContact
+ * @apiGroup Contact
+ * 
+ * @apiParam {String} email the users email
+ * 
+ *  * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 201 OK
+ *     {
+ *       "message": "successfully removed contact"
+ *     }
+ * 
+ * @apiError (400: User not found) {String} message "email doesnt exist in system"
+ * 
+ * @apiError (400: SQL error) {String} message "error checking if member is alread a contact"
+ * 
+ * @apiError (400: Failed to add member) {String} message "error removing member from contact"
+ * 
+ */
 router.post('/delete', (request, response, next) => {
-    //get memeberBid using email
     const getMemBIDQuery = "SELECT MemberID FROM Members WHERE Email = $1";
     pool.query(getMemBIDQuery, [request.body.email])
         .then(result => {
@@ -140,15 +160,13 @@ router.post('/delete', (request, response, next) => {
             })
         }})
 }, (request, response, next) => {
-    // check to see if memberB is already in memberA's contact
     const checkQuery = "SELECT * FROM Contacts WHERE memberid_a = $1 AND memberid_b=$2"
     pool.query(checkQuery, [request.decoded.memberid, request.body.memberid])
         .then(result => {
             if(result.rows.length > 0) {
                 next()
             } else if (result.rows.length === 0) {
-                response.status(200).send({
-                    // this should never happen
+                response.status(400).send({
                     message: "This contact is not a contact"
                 })
             }
@@ -160,7 +178,6 @@ router.post('/delete', (request, response, next) => {
         }) 
 
 }, (request, response, next) => {
-    // remove memberB from memberA's contact
     const deleteQuery = "DELETE FROM Contacts WHERE memberid_a = $1 AND memberid_b=$2"
     pool.query(deleteQuery, [request.decoded.memberid, request.body.memberid])
         .then(result => {
@@ -175,7 +192,18 @@ router.post('/delete', (request, response, next) => {
         })
 })
 
-// get user's information require user's email
+/** 
+ * @api {get} /contact/:email Get contact information
+ * @apiName GetContact
+ * @apiGroup Contact
+ * 
+ * @apiParam {String} email the users email
+ * 
+ * @apiSuccess (200: Success) {JSONObject} result.rows[0]
+ * 
+ * @apiError (400: User not found) {String} message "error"
+ * 
+ */
 router.get('/:email', (request, response, next) => {
     const {email} = request.params;
     //console.log(request.decoded.email);
