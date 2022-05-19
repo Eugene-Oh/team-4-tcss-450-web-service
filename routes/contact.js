@@ -182,11 +182,57 @@ router.get('/:email', (request, response, next) => {
     // console.log(request.decoded)
     //let userInfo = request.decoded;
     //console.log(userInfo.memberid);
-    const theQuery = "SELECT * FROM  Members WHERE email = $1";
-
-    pool.query(theQuery, [email])
+    //const theQuery = "SELECT * FROM Members INNER JOIN messages ON messages.memberid = members.memberid WHERE members.email = $1";
+        //get memeberBid using email
+        const getMemBIDQuery = "SELECT MemberID FROM Members WHERE Email = $1";
+        pool.query(getMemBIDQuery, [email])
+            .then(result => {
+                request.body.memberid = result.rows[0].memberid;
+                next();
+            })
+            .catch((error) => {{
+                response.status(400).send({
+                    message: "email doesnt exist in system"
+                })
+            }})
+}, (request, response, next) =>{
+    // get nummber of messages
+    const theQuery = "Select Count(*) from messages where memberid = $1"
+    pool.query(theQuery, [request.body.memberid])
         .then(result => {
-            response.status(200).send(result.rows[0]);
+            // response.status(200).send(result.rows[0]);
+            request.body.numOfMessages = result.rows[0].count;
+            next();
+        })
+        .catch((error) => {
+            response.status(400).send({
+                message: "error"
+            })
+        })
+}, (request, response, next) => {
+    // get number of contact
+    const theQuery = "Select count(*) from contacts where memberid_a = $1"
+    pool.query(theQuery, [request.body.memberid])
+        .then(result => {
+            request.body.numOfContact = result.rows[0].count;
+            next();
+            
+        })
+        .catch((error) => {
+            response.status(400).send({
+                message: "error"
+            })
+        })
+},(request, response, next) => {
+    // get memberinfo
+    const theQuery = "Select * from members where memberid = $1"
+    pool.query(theQuery, [request.body.memberid])
+        .then(result => {
+            response.status(200).send({
+                numOfContact: request.body.numOfContact,
+                numOfMessages: request.body.numOfMessages,
+                userInfo: result.rows[0]
+            })
         })
         .catch((error) => {
             response.status(400).send({
