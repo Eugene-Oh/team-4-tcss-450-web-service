@@ -174,8 +174,8 @@ router.post("/", (request, response, next) => {
  * @apiError (400: SQL Error) {String} message the reported SQL error details
  * 
  * @apiUse JSONError
- */ 
-router.get("/:chatId/:messageId", (request, response, next) => {
+ */
+router.get("/:chatId?/:messageId?", (request, response, next) => {
         //validate chatId is not empty or non-number
         if (request.params.chatId === undefined) {
             response.status(400).send({
@@ -240,18 +240,20 @@ router.get("/:chatId/:messageId", (request, response, next) => {
             })
 });
 
-// get most recent message, uses jwt
-router.get("/recent", (request, response, next) => {
-    const email = request.decoded.email;
-    console.log(email);
-    const query = "select * from chats join messages using (chatid) where chatid in (select chatid from members join chatmembers using (memberid) join chats using (chatid) where email = $1) and timestamp in (select max(timestamp) from messages group by chatid) order by timestamp desc"
-    pool.query(query, [email])
-        .then(result => {
-            response.status(200).send(result.rows);
-        })
-        .catch((error) =>  {
-            response.status(400).send({messages:"invalid token"});
-        })
-})
+// // get most recent message, uses jwt
+// router.get("/recent", (request, response, next) => {
+//     const email = request.decoded.email;
+//     console.log(email);
+//     const query = "select * from chats join messages using (chatid) where chatid in (select chatid from members join chatmembers using (memberid) join chats using (chatid) where email = $1) and timestamp in (select max(timestamp) from messages group by chatid) order by timestamp desc"
+//     pool.query(query, [email])
+//         .then(result => {
+//             //response.status(200).send(result.rows);
+//             request.
+//             next()
+//         })
+//         .catch((error) =>  {
+//             response.status(400).send({messages:"invalid token"});
+//         })
+// })
 
 module.exports = router
