@@ -109,14 +109,16 @@ router.delete('/', middleware.checkToken, (request, response, next) => {
     //and memberId in an object called decoded. It adds this object to 
     //the request object. 
     let memberid = request.decoded.memberid
-
+    console.log(request.decoded);
+    console.log(memberid);
     //validate email exists
     let query = 'SELECT * FROM Members WHERE MemberId=$1'
     let values = [memberid]
 
     pool.query(query, values)
         .then(result => {
-            if (result.rowCount == 0) {
+            console.log(result);
+            if (result.fields.length == 0) {
                 //this should NOT happen. The memberid is coming from a 
                 //JWT created by this service. But, keep the check here
                 //anyway.
