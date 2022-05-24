@@ -46,10 +46,21 @@ router.post('/', async (request, response) => {
 
     if(isStringProvided(email) && isStringProvided(password)) {
 
-        let theQuery = "SELECT Salt, Credentials.MemberID FROM Credentials INNER JOIN Members ON Credentials.MemberID = Members.MemberID WHERE Members.Email = $1"
+        let theQuery = "SELECT Salt, Credentials.MemberID, Verification, SaltedHash FROM Credentials INNER JOIN Members ON Credentials.MemberID = Members.MemberID WHERE Members.Email = $1"
         let values = [email]
         await pool.query(theQuery, values)
             .then(result => {
+                let checkHash = generateHash(password, result.rows[0].salt)
+                if (result.rows[0].verification == 0) {
+                    response.status(400).send({
+                        message: "Must verify email before resetting your password."
+                    })
+                }
+                if (result.rows[0].saltedhash == checkHash) {
+                    response.status(400).send({
+                        message: "You just entered your current password."
+                    })
+                }
                 response.status(200).send({
                     message: "Email sent",
                     success: true
@@ -77,7 +88,6 @@ router.post('/', async (request, response) => {
         })
     }
 })
-
 
 /**
  * @api {post} /forgot/:oldSalt/:newSalt/:newSaltedHash Request to register a user
