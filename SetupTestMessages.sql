@@ -438,7 +438,7 @@ RETURNING *;
 -- WHERE Members.Email='test2@test.com'
 
 -- insert into contact test -nhat
-INSERT INTO
-    Contacts(MemberID_A, MemberID_B)
-    VALUES(133, 132)
-RETURNING *;
+-- INSERT INTO
+--     Contacts(MemberID_A, MemberID_B)
+--     VALUES(133, 132)
+-- RETURNING *;
