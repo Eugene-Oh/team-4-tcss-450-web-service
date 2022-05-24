@@ -58,7 +58,7 @@ router.post('/', async (request, response) => {
                 }
                 if (result.rows[0].saltedhash == checkHash) {
                     response.status(400).send({
-                        message: "New password same as current password."
+                        message: "You just entered your current password."
                     })
                 }
                 response.status(200).send({
