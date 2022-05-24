@@ -241,19 +241,24 @@ router.get("/:chatId?/:messageId?", (request, response, next) => {
 });
 
 // // get most recent message, uses jwt
-// router.get("/recent", (request, response, next) => {
-//     const email = request.decoded.email;
-//     console.log(email);
-//     const query = "select * from chats join messages using (chatid) where chatid in (select chatid from members join chatmembers using (memberid) join chats using (chatid) where email = $1) and timestamp in (select max(timestamp) from messages group by chatid) order by timestamp desc"
-//     pool.query(query, [email])
-//         .then(result => {
-//             //response.status(200).send(result.rows);
-//             request.
-//             next()
-//         })
-//         .catch((error) =>  {
-//             response.status(400).send({messages:"invalid token"});
-//         })
-// })
+router.get("/recent/recent/recent", (request, response, next) => {
+    const email = request.decoded.email;
+    const memId = request.decoded.memberid;
+    console.log(email);
+    const query = `select * from chats join messages using (chatid) where chatid in 
+                    (select chatid from members join chatmembers using 
+                        (memberid) join chats using (chatid) where email = $1) 
+                        and timestamp in (select max(timestamp) from messages where memberid 
+                        <> $2 group by chatid) order by timestamp desc;`
+    pool.query(query, [email, memId])
+        .then(result => {
+            //response.status(200).send(result.rows);
+            response.status(200).send(result.rows);
+            //next()
+        })
+        .catch((error) =>  {
+            response.status(400).send({messages:"invalid token"});
+        })
+})
 
 module.exports = router
