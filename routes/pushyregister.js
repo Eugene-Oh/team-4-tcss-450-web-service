@@ -109,8 +109,6 @@ router.delete('/', middleware.checkToken, (request, response, next) => {
     //and memberId in an object called decoded. It adds this object to 
     //the request object. 
     let memberid = request.decoded.memberid
-    console.log(request.decoded);
-    console.log(memberid);
     //validate email exists
     let query = 'SELECT * FROM Members WHERE MemberId=$1'
     let values = [memberid]
