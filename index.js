@@ -30,7 +30,7 @@ app.use('/weather', require('./routes/weather.js'))
 //Messages route
 app.use('/messages', middleware.checkToken, require('./routes/messages.js'))
 //Chat route
-app.use('/chats', require('./routes/chats.js'))
+app.use('/chats', middleware.checkToken, require('./routes/chats.js'))
 //Forgot password route
 app.use('/forgot', require('./routes/forgot.js'))
 //Contacts route
