@@ -97,6 +97,32 @@ router.get('/getRooms', async (request, response) => {
         })
 })
 
+router.get('/checkHost', async (request, response) => {
+    const memberid = request.decoded.memberid
+    const chatid = request.headers['chatid']
+    const theQuery = "SELECT HOST FROM CHATS WHERE CHATID = $1"
+    await pool.query(theQuery, [chatid])
+        .then(result => {
+            if (result.rows[0].host == memberid) {
+                response.status(200).send({
+                    success: true,
+                    host: result.rows[0]
+                })
+            } else {
+                response.status(404).send({
+                    success: false,
+                    message: "You aren't the host of this chat."
+                })
+            }
+        })
+        .catch((error) => {
+            response.status(404).send({
+                success: false,
+                message: "Chat not found"
+            })
+        })
+})
+
 /**
  * @api {put} /chats/:chatId? Request add a user to a chat
  * @apiName PutChats
