@@ -96,6 +96,13 @@ router.post("/", (request, response, next) => {
     
 }, (request, response, next) => {
     //add the message to the database
+
+    // check if messages is of length 255 or less
+    if (request.body.message.length >= 255) {
+        response.status(400).send({
+            "message": "The message is " + (request.body.message.length - 254) + " characters too long."
+        })
+    }
     let insert = `INSERT INTO Messages(ChatId, Message, MemberId)
                   VALUES($1, $2, $3) 
                   RETURNING PrimaryKey AS MessageId, ChatId, Message, MemberId AS email, TimeStamp`
